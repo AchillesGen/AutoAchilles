@@ -1,0 +1,60 @@
+Main:
+  NEvents: {events}
+  HardCuts: true
+  EventCuts: false
+  DoRotate: false
+  RunDecays: False
+  Output:
+      Format: NuHepMC
+      Name: achilles.hepmc
+      Zipped: True
+
+SherpaOptions: !include "data/default/SherpaOptions.yml"
+
+Processes:
+  - Leptons: [{probe_pdg}, [13]]
+
+Beams:
+  - Beam:
+      PID: {probe_pdg}
+      Beam Params:
+        Type: Spectrum
+        HepData: {flux_file}
+
+Cascade:
+  Run: {run_cascade}
+  Interactions: !include "data/default/VirtResInteractions.yml"
+  Step: 0.04
+  Probability: Cylinder
+  InMedium: None
+  PotentialProp: False
+  Algorithm: Base
+
+NuclearModels:
+- NuclearModel: 
+   Model: QESpectral
+   ConfigFile: data/info_{target_pdg}_pke.data 
+   SpectralP: data/Spectral_Functions/pke{target_pdg}p_tot.data 
+   SpectralN: data/Spectral_Functions/pke{target_pdg}n_tot.data
+   FormFactorFile: "FormFactors.yml"
+   Ward: None
+- NuclearModel: 
+   Model: FortranModel
+   Name: RES_Spectral_Func
+   ConfigFile: data/info_{target_pdg}_pke.data 
+   FormFactorFile: "FormFactors.yml"
+   Ward: None
+
+Nuclei:
+  - Nucleus: !include "data/default/{target_pdg}.yml"
+
+HardCuts:
+  - Type: AngleTheta
+    PIDs: 11
+    range: [36.5, 38.5]
+
+Options: !include "data/default/OptionDefaults.yml"
+
+Backend:
+  Name: Default
+  Options: []
